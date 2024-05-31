@@ -75,8 +75,8 @@ def main():
         # reviews with more symbols othen cares more info about app
         app_reviews.sort(key=lambda x: (len(x["content"]) + len(x["title"])), reverse=True)
         app_reviews = app_reviews[:500] # seams useless to process more than 500 reviews
-        # analysis = gpt.process_reviews(app_info=process_app_info, reviews=app_reviews)
-        analysis = gpt.get_debug_analysis()
+        analysis = gpt.process_reviews(app_info=process_app_info, reviews=app_reviews)
+        # analysis = gpt.get_debug_analysis()
 
         print(f"Analyze is done:\n{analysis}")
         print(f"Prepare HTML..")
