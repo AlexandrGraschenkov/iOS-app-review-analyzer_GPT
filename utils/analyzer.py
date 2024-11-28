@@ -7,11 +7,12 @@ from tqdm.auto import tqdm
 gpt_models = {
 	"gpt-4-1106-preview": 128000,
 	"gpt-3.5-turbo-1106": 16385,
-    "gpt-4o-2024-05-13": 128000
+    "gpt-4o-2024-05-13": 128000,
+    "gpt-4o-mini-2024-07-18": 128000
 }
 
 class GPTWrapper:
-    def __init__(self, api_key, model, temperature = 0.2, max_input_token_count = None):
+    def __init__(self, api_key, model, temperature = 0.4, max_input_token_count = None):
         if model not in gpt_models:
             print(f"Can't find {model} in list available models")
             return None

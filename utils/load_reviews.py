@@ -4,10 +4,8 @@ from tqdm.auto import tqdm
 from pathlib import Path
 import os
 
-def get_reviews(store, app_id, skip_useless_field = False):
-    max_pages=10
+def get_reviews(store, app_id):
     base_url = f"https://itunes.apple.com/{store}/rss/customerreviews"
-    urls = [f"{base_url}/page={i}/id={app_id}/sortby=mostrecent/json" for i in range(1, max_pages + 1)]
 
     def fetch(url):
         try:
@@ -16,7 +14,7 @@ def get_reviews(store, app_id, skip_useless_field = False):
             return response.json()
         except requests.RequestException as e:
             print(f"Request failed: {e}")
-            return None
+            return []
 
     all_reviews = []
     has_next_page = True
@@ -26,7 +24,7 @@ def get_reviews(store, app_id, skip_useless_field = False):
         page += 1
         url = f"{base_url}/page={page}/id={app_id}/sortby=mostrecent/json"
         data = fetch(url)
-        if not data: return None
+        if not data: break
 
         res_data = process_response(data)
         if not res_data: break
@@ -39,10 +37,6 @@ def get_reviews(store, app_id, skip_useless_field = False):
         pbar.update()
         # print(f"Loaded: {page}/{last_page}")
 
-    if skip_useless_field:
-        for review in all_reviews:
-            review.pop('author', None)
-            review.pop('date', None)
     return all_reviews
 
 def process_response(data) -> dict:
@@ -146,12 +140,12 @@ def load_reviews(app_id, save_path=None, stores=["us", "ca", "au", "ru", "it", "
     pbar = tqdm(stores)
     for store in pbar:
         pbar.set_description_str(f"Load from store: {store}")
-        reviews += get_reviews(store=store, app_id=app_id, skip_useless_field=True)
+        reviews += get_reviews(store=store, app_id=app_id)
     if save_path:
         json.dump(reviews, open(save_path, "w"), ensure_ascii=False)
     return reviews
 
 if __name__ == "__main__":
-    app_id = "1448868559"
+    app_id = "6469359134"
     downloads_path = str(Path.home() / "Downloads")
     load_reviews(app_id, save_path=os.path.join(downloads_path, f"appstore_{app_id}_reviews.json"))

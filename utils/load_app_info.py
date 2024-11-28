@@ -3,6 +3,7 @@ import json
 
 def __load_app_info(store: str, app_id: str) -> dict:
     # App Store lookup API URL
+    #              https://itunes.apple.com/lookup?id=1460032075
     lookup_url = f'https://itunes.apple.com/lookup?id={app_id}&country={store}'
 
     # Make a GET request to the API
@@ -23,6 +24,8 @@ def __load_app_info(store: str, app_id: str) -> dict:
             app_update_history = app_info.get('releaseNotes', 'N/A')  # Update history might not be detailed in the lookup API
             app_icon = app_info.get('artworkUrl512')
             app_screenshots = app_info.get('screenshotUrls', [])
+            app_release_date = app_info.get('releaseDate', '').split("T")[0]
+            app_update_date = app_info.get('currentVersionReleaseDate', '').split("T")[0]
             if len(app_screenshots) == 0 and len(app_info.get('ipadScreenshotUrls', [])) > 0:
                 app_screenshots = app_info.get('ipadScreenshotUrls', [])
 
@@ -33,7 +36,9 @@ def __load_app_info(store: str, app_id: str) -> dict:
                 'description': app_description,
                 'update_history': app_update_history,
                 'icon': app_icon,
-                'screenshots': app_screenshots
+                'screenshots': app_screenshots,
+                'release': app_release_date,
+                'update': app_update_date
             }
             return app_info_dict
         else:
@@ -52,5 +57,5 @@ def load_app_info(app_id, save_path = None, try_stores=["us", "gb"]):
     return info
 
 if __name__ == "__main__":
-    app_id = "6445876180"
+    app_id = "1460032075"
     load_app_info(app_id, save_path=f"/Users/alex/Downloads/appstore_{app_id}_app.json")
