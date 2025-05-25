@@ -42,7 +42,9 @@ def __load_app_info(store: str, app_id: str) -> dict:
             }
             return app_info_dict
         else:
-            raise ValueError('No results found for the provided App ID.')
+            print(f'No results found for App ID: {app_id}; Store: {store}')
+            return dict()
+
     else:
         response.raise_for_status()
 
@@ -52,7 +54,7 @@ def load_app_info(app_id, save_path = None, try_stores=["us", "gb"]):
         info = __load_app_info(store=store, app_id=app_id)
         if "name" in info: break
     
-    if save_path:
+    if save_path and info:
         json.dump(info, open(save_path, "w"))
     return info
 

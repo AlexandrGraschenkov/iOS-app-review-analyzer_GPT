@@ -26,7 +26,7 @@ def parse_arguments():
     
     parser.add_argument('--stores',
                         type=str,
-                        default="us,ca,au,ru,it,in,fr,gb,ua,jp,cn,tw,my",
+                        default="us,ca,au,ru,it,in,fr,gb,ua,jp,cn,tw,my,de,kr,br,mx,es,sa,ae,vn,tr",
                         help='Array of Stores: "us,it"')
     
     parser.add_argument('--with_app_description',
@@ -75,6 +75,7 @@ def main():
         # reviews with more symbols othen cares more info about app
         app_reviews.sort(key=lambda x: (len(x["content"]) + len(x["title"])), reverse=True)
         app_reviews = app_reviews[:500] # seams useless to process more than 500 reviews
+        app_reviews.sort(key=lambda x: (x["date"]), reverse=True)
         reviews_to_process = [review.copy() for review in app_reviews]
         for review in reviews_to_process:
             review.pop('author', None)

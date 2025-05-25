@@ -135,7 +135,7 @@ class Hasher(dict):
         value = self[key] = type(self)()
         return value
 
-def load_reviews(app_id, save_path=None, stores=["us", "ca", "au", "ru", "it", "in", "fr", "gb", "ua", "jp", "cn", "tw", "my"]):
+def load_reviews(app_id, save_path=None, stores=["us", "ca", "au", "ru", "it", "in", "fr", "gb", "ua", "jp", "cn", "tw", "my", "de"]):
     reviews = []
     pbar = tqdm(stores)
     for store in pbar:
