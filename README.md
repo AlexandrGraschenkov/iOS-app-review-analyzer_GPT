@@ -1,4 +1,5 @@
-## Python App Review Analyzer
+## App Review Analyzer <img width=24px height=24px src="https://upload.wikimedia.org/wikipedia/commons/6/67/App_Store_%28iOS%29.svg"> / <img width=24px height=24px src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg">
+
 
 A powerful tool to analyze user reviews from both iOS App Store and Google Play Store using GPT.
 
@@ -11,39 +12,13 @@ A powerful tool to analyze user reviews from both iOS App Store and Google Play 
 - **Beautiful HTML reports**: Generates detailed HTML reports with review data
 - **Multi-store support**: Collects reviews from multiple countries/stores
 
-### Installation:
-```bash
-pip install -r requirements.txt
-```
-
 ### Usage:
-
-#### iOS Apps:
-```bash
+```sh
 python3 review_analyzer.py \
-  --gpt_model=gpt-4o-2024-05-13 \
   --gpt_api_key=sk-DfS... \
-  --app_ids=1448868559 \
-  --platform=ios
+  --app_ids=1454762989,io.instories
 ```
-
-#### Android Apps:
-```bash
-python3 review_analyzer.py \
-  --gpt_model=gpt-4o-2024-05-13 \
-  --gpt_api_key=sk-DfS... \
-  --app_ids=com.whatsapp \
-  --platform=android
-```
-
-#### Multiple Apps:
-```bash
-python3 review_analyzer.py \
-  --gpt_model=gpt-4o-2024-05-13 \
-  --gpt_api_key=sk-DfS... \
-  --app_ids=1448868559,com.whatsapp \
-  --platform=ios
-```
+`app_ids` separate with comma, autodetect `AppStore`/`GooglePlay`
 
 ### Parameters:
 - `--gpt_api_key`: Your OpenAI API key (required)
@@ -54,12 +29,18 @@ python3 review_analyzer.py \
 - `--save_folder`: Directory to save HTML reports (default: ./temp)
 
 ### App ID Formats:
-- **iOS**: Numeric ID (e.g., 1448868559)
-- **Android**: Package name (e.g., com.whatsapp)
+- **iOS**: Numeric ID (e.g., 1454762989)
+- **Android**: Package name (e.g., io.instories)
 
-### Dependencies:
-- openai
-- tiktoken
-- tqdm
-- requests
-- google-play-scraper
+### Instalation:
+```bash
+pip install -r requirements.txt
+```
+Dependencies:
+```
+openai
+tiktoken
+tqdm
+requests
+google-play-scraper
+```
