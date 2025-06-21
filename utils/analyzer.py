@@ -9,7 +9,9 @@ gpt_models = {
 	"gpt-3.5-turbo-1106": 16385,
     "gpt-4o-2024-05-13": 128000,
     "gpt-4o-mini-2024-07-18": 128000,
-    "gpt-4.1-mini": 128000
+    "gpt-4o-mini": 128000,
+    "gpt-4.1-mini": 128000,
+    "gpt-4.1-nano": 128000
 }
 
 class GPTWrapper:

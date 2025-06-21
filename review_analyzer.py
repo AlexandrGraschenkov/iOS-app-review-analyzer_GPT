@@ -18,7 +18,7 @@ def parse_arguments():
     list_models = ", ".join(list(gpt_models.keys()))
     parser.add_argument('--gpt_model',
                         type=str,
-                        default="gpt-4o-mini-2024-07-18",
+                        default="gpt-4.1-mini",
                         help=f'Choose model from: {list_models}')
     
     parser.add_argument('--app_ids',

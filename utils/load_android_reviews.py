@@ -5,7 +5,7 @@ from pathlib import Path
 import os
 from utils.load_android_app_info import parse_date
 
-def get_android_reviews(country, app_id, count=200):
+def get_android_reviews(country, app_id, count=300):
     try:
         result, continuation_token = reviews(
             app_id,

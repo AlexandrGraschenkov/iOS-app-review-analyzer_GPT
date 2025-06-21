@@ -26,6 +26,8 @@ def __load_app_info(store: str, app_id: str) -> dict:
             app_screenshots = app_info.get('screenshotUrls', [])
             app_release_date = app_info.get('releaseDate', '').split("T")[0]
             app_update_date = app_info.get('currentVersionReleaseDate', '').split("T")[0]
+            app_rating = app_info.get('averageUserRatingForCurrentVersion', 0)
+            app_rating_count = app_info.get('userRatingCountForCurrentVersion', 0)
             if len(app_screenshots) == 0 and len(app_info.get('ipadScreenshotUrls', [])) > 0:
                 app_screenshots = app_info.get('ipadScreenshotUrls', [])
 
@@ -38,7 +40,9 @@ def __load_app_info(store: str, app_id: str) -> dict:
                 'icon': app_icon,
                 'screenshots': app_screenshots,
                 'release': app_release_date,
-                'update': app_update_date
+                'update': app_update_date,
+                'rating': app_rating,
+                'rating_count': app_rating_count
             }
             return app_info_dict
         else:

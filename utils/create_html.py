@@ -7,6 +7,8 @@ def _create_reviews_html_part(reviews):
     for review in reviews:
         review_content_escaped = html.escape(review['content'])
         review_title_escaped = html.escape(review.get('title', ''))
+        review_title = review.get("title", "")
+        title_html = f'<h3 class="review-title">{review_title}</h3>' if len(review_title) > 0 else ""
         text = f'''
             <div class="review-item">
                 <div class="review-header">
@@ -18,7 +20,7 @@ def _create_reviews_html_part(reviews):
                     <span class="review-date">{review["date"]}</span>
                 </div>
                 <div class="review-name">
-                    <h3 class="review-title">{review.get("title", "")}</h3>
+                    {title_html}
                     <div class="translation-buttons" data-title="{review_title_escaped}" data-content="{review_content_escaped}">
                         <button onclick="translateWithGoogle()" title="Translate with Google">🌐</button>
                         <button onclick="translateWithYandex()" title="Translate with Yandex">🅨</button>
@@ -162,16 +164,21 @@ def _generate_app_store_link(app_id, is_appstore):
 
 def _get_platform_name(is_appstore):
     """Get platform name for display"""
-    return 'App Store' if is_appstore else 'Google Play'
+    appstore_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><path fill="url(#appStore_svg__a)" d="M19.142.015H4.855A4.84 4.84 0 0 0 .013 4.857v14.289a4.84 4.84 0 0 0 4.842 4.839h14.289a4.84 4.84 0 0 0 4.842-4.842V4.857A4.843 4.843 0 0 0 19.142.015"></path><path fill="#fff" d="m11.897 5.522.485-.839a1.092 1.092 0 1 1 1.894 1.091L9.599 13.87h3.383c1.097 0 1.711 1.288 1.235 2.181H4.298c-.605 0-1.091-.485-1.091-1.091s.485-1.091 1.091-1.091h2.781l3.56-6.169-1.112-1.93a1.092 1.092 0 0 1 1.894-1.091zM7.69 17.175l-1.049 1.819a1.092 1.092 0 1 1-1.894-1.091l.779-1.348c.881-.273 1.597-.063 2.163.62zm9.031-3.299h2.837c.605 0 1.091.485 1.091 1.091s-.485 1.091-1.091 1.091h-1.576l1.064 1.846a1.093 1.093 0 0 1-1.893 1.091l-4.03-6.981c-.914-1.576-.261-3.158.383-3.694l3.215 5.558z"></path><defs><linearGradient id="appStore_svg__a" x1="11.998" x2="11.998" y1="0.015" y2="23.985" gradientUnits="userSpaceOnUse"><stop stop-color="#0ed4fc"></stop><stop offset="1" stop-color="#0c57ef"></stop></linearGradient></defs></svg>'
+    play_store_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><g clip-path="url(#playStore_svg__a)"><path fill="#ea4335" d="M11.684 11.495 1.586 22.053a2.75 2.75 0 0 0 2.623 1.967q.788 0 1.377-.393l11.41-6.492-5.311-5.639z"></path><path fill="#fbbc04" d="m21.913 9.659-4.918-2.82-5.508 4.853 5.574 5.443 4.918-2.754c.852-.459 1.443-1.377 1.443-2.361a2.95 2.95 0 0 0-1.508-2.361z"></path><path fill="#4285f4" d="M1.586 1.987c-.066.197-.066.459-.066.721v18.688c0 .262 0 .459.066.721l10.492-10.295z"></path><path fill="#34a853" d="m11.75 12.02 5.246-5.18L5.651.413C5.258.151 4.733.02 4.209.02c-1.246 0-2.361.852-2.623 1.967z"></path></g><defs><clipPath id="playStore_svg__a"><path fill="#fff" d="M0 0h24v24H0z"></path></clipPath></defs></svg>'
+    return f'{appstore_icon} App Store' if is_appstore else f'{play_store_icon} Google Play'
 
 # HTML content
 def _create_html(app_data):
     reviews_html = _create_reviews_html_part(app_data["reviews"])
-    
-    # Generate app store link
     app_store_link = _generate_app_store_link(app_data["app_id"], app_data["is_appstore"])
     platform_name = _get_platform_name(app_data["is_appstore"])
-    
+
+    rating_text = f'⭐ {app_data["rating"]} <span style="font-size: 0.7em; color: #888">[{app_data["rating_count"]} ratings'
+    if "reviews_count" in app_data:
+        rating_text += f'; {app_data["reviews_count"]} reviews'
+    rating_text += ']</span>'
+
     html_content = f'''
     <!DOCTYPE html>
     <html lang="en">
@@ -316,7 +323,7 @@ def _create_html(app_data):
                             <p><strong>Last Update:</strong> {app_data["update"]}</p>
                         </div>
                         <div class="row">
-                            <p></p>
+                            <p><strong>Rating:</strong> {rating_text}</p>
                             <p><strong>Link:</strong> <a href="{app_store_link}" target="_blank">{platform_name}</a></p>
                         </div>
                 </div>
@@ -365,6 +372,9 @@ def create_html(app_analysis, app_info, app_reviews, sensortower_info, save_to_p
         "reviews": app_reviews,
         "update": app_info["update"],
         "release": app_info["release"],
+        "rating": app_info["rating"],
+        "rating_count": app_info["rating_count"],
+        "reviews_count": app_info["reviews_count"],
         "downloads": sensortower_info["downloads"],
         "revenue": sensortower_info["revenue"],
         "app_id": app_id,
@@ -425,7 +435,10 @@ _example_app_info = """
     "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/a4/57/d9/a457d97f-52dd-0b96-6995-bdb6d5f9f0cb/2580441d-bc48-4c0a-9fb8-3159bbc5a5a5_VCP_ASO_SS_5.5_06.jpg/392x696bb.jpg", 
     "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/3e/d8/d2/3ed8d242-04b6-789a-1f31-a6f1a20182f5/5d48cc56-cdd9-4f00-b1cb-ca359e8066e3_VCP_ASO_SS_5.5_07.jpg/392x696bb.jpg"
     ], 
-"icon":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/0e/0a/17/0e0a1734-2679-2665-c2f0-b7a7bf998c6c/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/512x512bb.jpg"}
+"icon":"https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/0e/0a/17/0e0a1734-2679-2665-c2f0-b7a7bf998c6c/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/512x512bb.jpg",
+"rating": 4.5,
+"rating_count": 1000
+}
 """
 _example_app_reviews = """
 [

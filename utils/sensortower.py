@@ -41,19 +41,24 @@ def _get_revenue_and_downloads(html: str):
     return None, None
 
 if __name__ == "__main__":
-    # URL of the HTML page
-    url = 'https://app.sensortower.com/overview/284876795?country=US'
+    
+    dirname = os.path.dirname(__file__)
+    filepath = os.path.join(dirname, "../temp/test_sensortower_5.html")
 
-    # Send GET request to fetch the HTML content
-    response = requests.get(url)
-
-    # Check if the request was successful
-    if response.status_code == 200:
-        # Save the content to a file
-        dirname = os.path.dirname(__file__)
-        filepath = os.path.join(dirname, "../temp/test_sensortower_4.html")
-        print(_get_revenue_and_downloads(response.text))
-        with open(filepath, 'w', encoding='utf-8') as file:
-            file.write(response.text)
+    if os.path.exists(filepath):
+        with open(filepath, 'r', encoding='utf-8') as file:
+            html = file.read()
     else:
-        print(f"Failed to fetch the page. Status code: {response.status_code}")
+        url = 'https://app.sensortower.com/overview/284876795?country=US'
+        response = requests.get(url)
+        html = response.text
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            with open(filepath, 'w', encoding='utf-8') as file:
+                file.write(response.text)
+        else:
+            print(f"Failed to fetch the page. Status code: {response.status_code}")
+
+    print(_get_revenue_and_downloads(html))
+    

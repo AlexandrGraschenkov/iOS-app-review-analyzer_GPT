@@ -46,10 +46,12 @@ def __load_android_app_info(country: str, app_id: str) -> dict:
                 'update': parse_date(result.get('lastUpdatedOn', '')),
                 'developer': result.get('developer', ''),
                 'genre': result.get('genre', ''),
-                'score': result.get('score', 0),
                 'installs': result.get('installs', ''),
                 'price': result.get('price', 0),
-                'free': result.get('free', True)
+                'free': result.get('free', True),
+                'rating': result.get('score', 0),
+                'rating_count': result.get('ratings', 0),
+                'reviews_count': result.get('reviews', 0)
             }
             return app_info_dict
         else:
@@ -72,5 +74,5 @@ def load_android_app_info(app_id, save_path=None, try_countries=["us", "gb"]):
     return info
 
 if __name__ == "__main__":
-    app_id = "com.whatsapp"
+    app_id = "io.instories"
     load_android_app_info(app_id, save_path=f"/Users/alex/Downloads/android_{app_id}_app.json") 
