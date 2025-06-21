@@ -2,6 +2,8 @@
 
 A powerful tool to analyze user reviews from both iOS App Store and Google Play Store using GPT.
 
+<img src="images/analytics_preview.jpg">
+
 ### Features:
 - **Multi-platform support**: iOS App Store and Google Play Store
 - **AI-powered analysis**: Uses OpenAI GPT models to analyze reviews
@@ -54,9 +56,6 @@ python3 review_analyzer.py \
 ### App ID Formats:
 - **iOS**: Numeric ID (e.g., 1448868559)
 - **Android**: Package name (e.g., com.whatsapp)
-
-### Example Output:
-<img src="images/analytics_preview.jpg">
 
 ### Dependencies:
 - openai
