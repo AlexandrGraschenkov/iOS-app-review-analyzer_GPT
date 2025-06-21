@@ -29,7 +29,7 @@ def parse_arguments():
     parser.add_argument('--stores',
                         type=str,
                         default="us,ca,au,ru,it,in,fr,gb,ua,jp,cn,tw,my,de,kr,br,mx,es,sa,ae,vn,tr",
-                        help='Array of Stores: "us,it"')
+                        help='Array of Stores: "us,it"; Only for AppStore')
     
     parser.add_argument('--with_app_description',
                         action='store_true',
@@ -72,7 +72,7 @@ def main():
         if is_appstore:
             app_reviews = load_ios_reviews(app_id, stores=stores)
         else:
-            app_reviews = load_android_reviews(app_id, countries=stores)
+            app_reviews = load_android_reviews(app_id)
             
         if len(app_reviews) > 5:
             print(f"{len(app_reviews)} reviews of the app have been downloaded; Start analyzing..")

@@ -7,25 +7,13 @@ def parse_date(date_input):
     if not date_input:
         return ''
     
-    # If it's already a datetime object, convert directly
-    if isinstance(date_input, datetime):
-        return date_input.strftime('%Y-%m-%d')
+    try:
+        # Try to parse the date string like 'Aug 7, 2022'
+        parsed_date = datetime.strptime(date_input, '%b %d, %Y')
+        return parsed_date.strftime('%Y-%m-%d')
     
-    # If it's a string, parse it
-    if isinstance(date_input, str):
-        try:
-            if 'T' in date_input: 
-                return date_input.split("T")[0]
-            
-            # Try to parse the date string like 'Aug 7, 2022'
-            parsed_date = datetime.strptime(date_input, '%b %d, %Y')
-            return parsed_date.strftime('%Y-%m-%d')
-        
-        except ValueError:
-            return date_input
-    
-    # For any other type, try to convert to string
-    return str(date_input)
+    except ValueError:
+        return ""
 
 def __load_android_app_info(country: str, app_id: str) -> dict:
     try:
