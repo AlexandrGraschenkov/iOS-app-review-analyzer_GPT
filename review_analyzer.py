@@ -1,7 +1,9 @@
 import argparse, os
 from utils.analyzer import gpt_models, GPTWrapper
-from utils.load_app_info import load_app_info
-from utils.load_reviews import load_reviews
+from utils.load_app_info import load_ios_app_info
+from utils.load_reviews import load_ios_reviews
+from utils.load_android_app_info import load_android_app_info
+from utils.load_android_reviews import load_android_reviews
 from utils.create_html import create_html
 from utils.sensortower import get_revenue_and_downloads
 
@@ -48,18 +50,30 @@ def main():
 
     app_ids = args.app_ids.split(",")
     app_ids = [x for x in app_ids if len(x)>0]
+    app_ids = [x.strip() for x in app_ids]
     stores = args.stores.split(",")
+    stores = [x.strip() for x in stores]
 
     for app_id in app_ids:
-        print(f"Load app info: {app_id}")
-        app_info = load_app_info(app_id)
+        is_appstore = app_id.isdigit() and len(app_id) > 5
+        print(f"Load app info: {app_id} ({'AppStore' if is_appstore else 'GooglePlay'})")
+
+        if is_appstore:
+            app_info = load_ios_app_info(app_id)
+        else:
+            app_info = load_android_app_info(app_id)
+            
         if "name" in app_info:
             print(f"Info loaded for app: {app_info['name']};\nStart load reviews..")
         else:
             print(f"Can't load app info: {app_id}; Break")
             continue
 
-        app_reviews = load_reviews(app_id, stores=stores)
+        if is_appstore:
+            app_reviews = load_ios_reviews(app_id, stores=stores)
+        else:
+            app_reviews = load_android_reviews(app_id, countries=stores)
+            
         if len(app_reviews) > 5:
             print(f"{len(app_reviews)} reviews of the app have been downloaded; Start analyzing..")
         else:
@@ -73,7 +87,7 @@ def main():
         process_app_info.pop('description', None) # With description it take Pros from it
 
         # reviews with more symbols othen cares more info about app
-        app_reviews.sort(key=lambda x: (len(x["content"]) + len(x["title"])), reverse=True)
+        app_reviews.sort(key=lambda x: (len(x["content"]) + len(x.get("title", ""))), reverse=True)
         app_reviews = app_reviews[:500] # seams useless to process more than 500 reviews
         app_reviews.sort(key=lambda x: (x["date"]), reverse=True)
         reviews_to_process = [review.copy() for review in app_reviews]
@@ -89,14 +103,17 @@ def main():
 
         dir_path = os.path.abspath(args.save_folder)
         os.makedirs(dir_path, exist_ok=True)
-        name = f"app_{app_id}_{app_info['name']}.html"
+        platform_prefix = "ios" if is_appstore else "android"
+        name = f"{platform_prefix}_{app_id}_{app_info['name']}.html"
         name = name.replace(" ", "_")
         file_name = os.path.join(dir_path, name)
         create_html(app_analysis=analysis["app_analysis"], 
                     app_info=app_info, 
                     app_reviews=app_reviews, 
                     sensortower_info=sensor_info, 
-                    save_to_path=file_name)
+                    save_to_path=file_name,
+                    app_id=app_id,
+                    is_appstore=is_appstore)
         print(f"Done: {app_info['name']};\nResult saved to: {file_name}")
         
 

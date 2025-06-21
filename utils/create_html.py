@@ -6,7 +6,7 @@ def _create_reviews_html_part(reviews):
     review_items = []
     for review in reviews:
         review_content_escaped = html.escape(review['content'])
-        review_title_escaped = html.escape(review['title'])
+        review_title_escaped = html.escape(review.get('title', ''))
         text = f'''
             <div class="review-item">
                 <div class="review-header">
@@ -18,7 +18,7 @@ def _create_reviews_html_part(reviews):
                     <span class="review-date">{review["date"]}</span>
                 </div>
                 <div class="review-name">
-                    <h3 class="review-title">{review["title"]}</h3>
+                    <h3 class="review-title">{review.get("title", "")}</h3>
                     <div class="translation-buttons" data-title="{review_title_escaped}" data-content="{review_content_escaped}">
                         <button onclick="translateWithGoogle()" title="Translate with Google">🌐</button>
                         <button onclick="translateWithYandex()" title="Translate with Yandex">🅨</button>
@@ -153,9 +153,25 @@ def _create_reviews_html_part(reviews):
     </div>
     '''
 
+def _generate_app_store_link(app_id, is_appstore):
+    """Generate app store link based on platform and app ID"""
+    if is_appstore:
+        return f"https://apps.apple.com/us/app/id{app_id}"
+    else:
+        return f"https://play.google.com/store/apps/details?id={app_id}"
+
+def _get_platform_name(is_appstore):
+    """Get platform name for display"""
+    return 'App Store' if is_appstore else 'Google Play'
+
 # HTML content
 def _create_html(app_data):
     reviews_html = _create_reviews_html_part(app_data["reviews"])
+    
+    # Generate app store link
+    app_store_link = _generate_app_store_link(app_data["app_id"], app_data["is_appstore"])
+    platform_name = _get_platform_name(app_data["is_appstore"])
+    
     html_content = f'''
     <!DOCTYPE html>
     <html lang="en">
@@ -294,11 +310,15 @@ def _create_html(app_data):
                     <div class="row">
                         <p><strong>Downloads:</strong> {app_data["downloads"]}</p>
                         <p><strong>Release Date:</strong> {app_data["release"]}</p>
-                    </div>
-                    <div class="row">
-                        <p><strong>Revenue:</strong> {app_data["revenue"]}</p>
-                        <p><strong>Last Update:</strong> {app_data["update"]}</p>
-                    </div>
+                        </div>
+                        <div class="row">
+                            <p><strong>Revenue:</strong> {app_data["revenue"]}</p>
+                            <p><strong>Last Update:</strong> {app_data["update"]}</p>
+                        </div>
+                        <div class="row">
+                            <p></p>
+                            <p><strong>Link:</strong> <a href="{app_store_link}" target="_blank">{platform_name}</a></p>
+                        </div>
                 </div>
             </div>
             <p><strong>Why the app is popular:</strong> {app_data["app_analysis"]["why_app_popular"]}</p>
@@ -336,7 +356,7 @@ def _create_html(app_data):
     '''
     return html_content
 
-def create_html(app_analysis, app_info, app_reviews, sensortower_info, save_to_path, open_html_page=True):
+def create_html(app_analysis, app_info, app_reviews, sensortower_info, save_to_path, open_html_page=True, app_id=None, is_appstore=None):
     # Write the HTML content to a file
     app_data = {
         "app_analysis": app_analysis,
@@ -346,7 +366,9 @@ def create_html(app_analysis, app_info, app_reviews, sensortower_info, save_to_p
         "update": app_info["update"],
         "release": app_info["release"],
         "downloads": sensortower_info["downloads"],
-        "revenue": sensortower_info["revenue"]
+        "revenue": sensortower_info["revenue"],
+        "app_id": app_id,
+        "is_appstore": is_appstore
     }
 
     html_content = _create_html(app_data)
@@ -496,4 +518,6 @@ if __name__ == "__main__":
     app_reviews = json.loads(_example_app_reviews)
     dirname = os.path.dirname(__file__)
     sensortower_info = {"downloads": "20k", "revenue": "10k$"}
-    create_html(app_analytics, app_info, app_reviews, sensortower_info, os.path.join(dirname, "../temp/test_html.html"))
+    # Example iOS app ID for testing
+    test_app_id = "1620725834"
+    create_html(app_analytics, app_info, app_reviews, sensortower_info, os.path.join(dirname, "../temp/test_html.html"), app_id=test_app_id, is_appstore=True)

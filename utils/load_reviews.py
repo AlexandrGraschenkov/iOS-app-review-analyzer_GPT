@@ -135,7 +135,7 @@ class Hasher(dict):
         value = self[key] = type(self)()
         return value
 
-def load_reviews(app_id, save_path=None, stores=["us", "ca", "au", "ru", "it", "in", "fr", "gb", "ua", "jp", "cn", "tw", "my", "de"]):
+def load_ios_reviews(app_id, save_path=None, stores=["us", "ca", "au", "ru", "it", "in", "fr", "gb", "ua", "jp", "cn", "tw", "my", "de"]):
     reviews = []
     pbar = tqdm(stores)
     for store in pbar:
@@ -148,4 +148,4 @@ def load_reviews(app_id, save_path=None, stores=["us", "ca", "au", "ru", "it", "
 if __name__ == "__main__":
     app_id = "6469359134"
     downloads_path = str(Path.home() / "Downloads")
-    load_reviews(app_id, save_path=os.path.join(downloads_path, f"appstore_{app_id}_reviews.json"))
+    load_ios_reviews(app_id, save_path=os.path.join(downloads_path, f"appstore_{app_id}_reviews.json"))

@@ -48,7 +48,7 @@ def __load_app_info(store: str, app_id: str) -> dict:
     else:
         response.raise_for_status()
 
-def load_app_info(app_id, save_path = None, try_stores=["us", "gb"]):
+def load_ios_app_info(app_id, save_path = None, try_stores=["us", "gb"]):
     info = None
     for store in try_stores:
         info = __load_app_info(store=store, app_id=app_id)
@@ -60,4 +60,4 @@ def load_app_info(app_id, save_path = None, try_stores=["us", "gb"]):
 
 if __name__ == "__main__":
     app_id = "1460032075"
-    load_app_info(app_id, save_path=f"/Users/alex/Downloads/appstore_{app_id}_app.json")
+    load_ios_app_info(app_id, save_path=f"/Users/alex/Downloads/appstore_{app_id}_app.json")
