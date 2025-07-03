@@ -71,6 +71,7 @@ def main():
 
         if is_appstore:
             app_reviews = load_ios_reviews(app_id, stores=stores)
+            app_info["reviews_count"] = len(app_reviews)
         else:
             app_reviews = load_android_reviews(app_id)
             
